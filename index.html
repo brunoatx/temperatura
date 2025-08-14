@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌡 -- | 💧 --</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #d9e4ec);
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #007BFF;
+            color: white;
+            padding: 15px 0;
+            font-size: 1.5em;
+        }
+        .container {
+            padding: 15px;
+            max-width: 900px;
+            margin: auto;
+        }
+        iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            margin-top: 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        @media (max-width: 600px) {
+            iframe {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        📡 Monitoreo de Temperatura y Humedad
+    </header>
+
+    <div class="container">
+        <h2>Velocímetro Temperatura</h2>
+        <iframe src="https://thingspeak.mathworks.com/channels/3035754/widgets/1115753"></iframe>
+
+        <h2>Velocímetro Humedad</h2>
+        <iframe src="https://thingspeak.mathworks.com/channels/3035754/widgets/1115755"></iframe>
+
+        <h2>Gráfico Temperatura</h2>
+        <iframe src="https://thingspeak.mathworks.com/channels/3035754/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+
+        <h2>Gráfico Humedad</h2>
+        <iframe src="https://thingspeak.mathworks.com/channels/3035754/charts/2?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+    </div>
+
+    <script>
+        async function actualizarTitulo() {
+            try {
+                let resp = await fetch("https://api.thingspeak.com/channels/3035754/feeds.json?results=1");
+                let data = await resp.json();
+                let temp = data.feeds[0].field1;
+                let hum  = data.feeds[0].field2;
+                document.title = `🌡 ${temp}°C | 💧 ${hum}%`;
+            } catch (e) {
+                console.error("Error al obtener datos:", e);
+            }
+        }
+        actualizarTitulo();
+        setInterval(actualizarTitulo, 15000);
+    </script>
+
+</body>
+</html>
